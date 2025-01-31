@@ -10,7 +10,8 @@ import {
   Button,
 } from "@mui/material";
 import { styled } from "@mui/material/styles";
-import { Copy, Delete } from "lucide-react";
+import ContentCopyIcon from '@mui/icons-material/ContentCopy';
+import DeleteIcon from '@mui/icons-material/Delete';
 
 const StyledIcon = styled("div")({
   width: "20px",
@@ -169,7 +170,7 @@ const URLRedirectManager = () => {
                   }}
                 >
                   <StyledIcon>
-                    <Copy size={18} />
+                    <ContentCopyIcon fontSize="small" />
                   </StyledIcon>
                 </IconButton>
                 <IconButton
@@ -183,7 +184,7 @@ const URLRedirectManager = () => {
                   }}
                 >
                   <StyledIcon>
-                    <Delete size={18} />
+                    <DeleteIcon fontSize="small" />
                   </StyledIcon>
                 </IconButton>
               </ActionButtons>
