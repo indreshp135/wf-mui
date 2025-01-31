@@ -1,16 +1,110 @@
 import React, { useState } from 'react';
-import {
-  Box,
-  TextField,
-  IconButton,
-  Paper,
-  List,
-  ListItem,
-  ListItemText,
-  ListItemSecondaryAction,
-  Typography,
-} from '@mui/material';
-import { ContentCopy, Delete, ArrowForward } from 'lucide-react';
+import { Box, TextField, IconButton, Paper, List, ListItem, ListItemText, ListItemSecondaryAction, Typography, Button } from '@mui/material';
+import { styled } from '@mui/material/styles';
+import { Copy, Delete } from 'lucide-react';
+
+const StyledIcon = styled('div')({
+  width: '20px',
+  height: '20px',
+  display: 'flex',
+  alignItems: 'center',
+  justifyContent: 'center'
+});
+
+const StyledPaper = styled(Paper)(({ theme }) => ({
+  padding: theme.spacing(3),
+  backgroundColor: '#ffffff',
+  borderRadius: '16px',
+  boxShadow: '0 20px 40px rgba(0, 0, 0, 0.08)',
+  border: '1px solid rgba(231, 231, 231, 0.8)',
+  maxHeight: '80vh',
+  display: 'flex',
+  flexDirection: 'column',
+  width: '100%'
+}));
+
+const StyledListPaper = styled(Paper)(({ theme }) => ({
+  flex: 1,
+  overflow: 'auto',
+  borderRadius: '12px',
+  backgroundColor: '#f8fafc',
+  border: '1px solid rgba(231, 231, 231, 0.8)',
+  '&::-webkit-scrollbar': {
+    width: '8px',
+    height: '8px',
+  },
+  '&::-webkit-scrollbar-track': {
+    background: '#f1f1f1',
+    borderRadius: '4px',
+  },
+  '&::-webkit-scrollbar-thumb': {
+    background: '#cdcdcd',
+    borderRadius: '4px',
+    '&:hover': {
+      background: '#a6a6a6',
+    },
+  },
+}));
+
+const StyledListItem = styled(ListItem)(({ theme }) => ({
+  margin: '8px',
+  borderRadius: '8px',
+  backgroundColor: '#ffffff',
+  boxShadow: '0 2px 4px rgba(0, 0, 0, 0.02)',
+  border: '1px solid rgba(231, 231, 231, 0.6)',
+  transition: 'all 0.2s ease-in-out',
+  paddingRight: '100px', // Make space for buttons
+  position: 'relative',
+  '&:hover': {
+    transform: 'translateY(-1px)',
+    boxShadow: '0 4px 8px rgba(0, 0, 0, 0.05)',
+    backgroundColor: '#f8fafc',
+  },
+}));
+
+const ScrollableText = styled('div')({
+  overflowX: 'auto',
+  whiteSpace: 'nowrap',
+  width: '100%',
+  '&::-webkit-scrollbar': {
+    height: '4px',
+  },
+  '&::-webkit-scrollbar-track': {
+    background: '#f1f1f1',
+    borderRadius: '2px',
+  },
+  '&::-webkit-scrollbar-thumb': {
+    background: '#cdcdcd',
+    borderRadius: '2px',
+    '&:hover': {
+      background: '#a6a6a6',
+    },
+  },
+});
+
+const ActionButtons = styled('div')({
+  position: 'absolute',
+  right: '8px',
+  top: '50%',
+  transform: 'translateY(-50%)',
+  display: 'flex',
+  alignItems: 'center',
+  backgroundColor: 'inherit',
+  paddingLeft: '8px',
+});
+
+const StyledButton = styled(Button)(({ theme }) => ({
+  minWidth: '100px',
+  backgroundColor: '#0f172a',
+  borderRadius: '8px',
+  textTransform: 'none',
+  fontWeight: 600,
+  boxShadow: '0 2px 8px rgba(15, 23, 42, 0.15)',
+  '&:hover': {
+    backgroundColor: '#1e293b',
+    boxShadow: '0 4px 12px rgba(15, 23, 42, 0.25)',
+  },
+}));
 
 const URLRedirectManager = () => {
   const [urls, setUrls] = useState([]);
@@ -20,9 +114,8 @@ const URLRedirectManager = () => {
     setInputValue(e.target.value);
   };
 
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    const newUrls = inputValue.split(' ').filter((url) => url.trim());
+  const handleAdd = () => {
+    const newUrls = inputValue.split(' ').filter(url => url.trim());
     if (newUrls.length > 0) {
       setUrls([...urls, ...newUrls]);
       setInputValue('');
@@ -39,45 +132,97 @@ const URLRedirectManager = () => {
   };
 
   return (
-    <Box className="w-full max-w-2xl mx-auto p-4">
-      <Paper className="p-4">
-        <Typography variant="h6" className="mb-4">
+      <StyledPaper>
+        <Typography 
+          variant="h6" 
+          sx={{ 
+            marginBottom: 3, 
+            fontWeight: 600,
+            color: '#0f172a',
+            letterSpacing: '-0.02em',
+            fontSize: '1.5rem'
+          }}
+        >
           Redirect URLs
         </Typography>
-
-        <form onSubmit={handleSubmit} className="mb-4">
+        
+        <Box sx={{ display: 'flex', gap: 1.5, marginBottom: 3 }}>
           <TextField
             fullWidth
             value={inputValue}
             onChange={handleInputChange}
             placeholder="Enter space-separated URLs"
             variant="outlined"
+            size="small"
+            sx={{
+              '& .MuiOutlinedInput-root': {
+                borderRadius: '8px',
+                backgroundColor: '#ffffff',
+                '&:hover fieldset': {
+                  borderColor: '#94a3b8',
+                },
+                '&.Mui-focused fieldset': {
+                  borderColor: '#0f172a',
+                },
+              },
+            }}
           />
-        </form>
+          <StyledButton variant="contained" onClick={handleAdd}>
+            Add
+          </StyledButton>
+        </Box>
 
-        <Paper className="max-h-96 overflow-y-auto">
-          <List>
+        <StyledListPaper elevation={0}>
+          <List sx={{ padding: '4px' }}>
             {urls.map((url, index) => (
-              <ListItem key={index} divider>
-                <ListItemText primary={url} />
-                <ListItemSecondaryAction>
-                  <IconButton
-                    edge="end"
-                    onClick={() => handleCopy(url)}
-                    className="mr-2"
+              <StyledListItem key={index}>
+                <ScrollableText>
+                  <Typography
+                    sx={{
+                      color: '#334155',
+                      fontSize: '0.95rem',
+                      fontWeight: 500,
+                    }}
                   >
-                    <ContentCopy className="w-5 h-5" />
+                    {url}
+                  </Typography>
+                </ScrollableText>
+                <ActionButtons>
+                  <IconButton
+                    onClick={() => handleCopy(url)}
+                    sx={{ 
+                      marginRight: 1,
+                      color: '#64748b',
+                      '&:hover': {
+                        color: '#0f172a',
+                        backgroundColor: 'rgba(15, 23, 42, 0.08)',
+                      },
+                    }}
+                  >
+                    <StyledIcon>
+                      <Copy size={18} />
+                    </StyledIcon>
                   </IconButton>
-                  <IconButton edge="end" onClick={() => handleDelete(index)}>
-                    <Delete className="w-5 h-5" />
+                  <IconButton
+                    onClick={() => handleDelete(index)}
+                    sx={{ 
+                      color: '#64748b',
+                      '&:hover': {
+                        color: '#ef4444',
+                        backgroundColor: 'rgba(239, 68, 68, 0.08)',
+                      },
+                    }}
+                  >
+                    <StyledIcon>
+                      <Delete size={18} />
+                    </StyledIcon>
                   </IconButton>
-                </ListItemSecondaryAction>
-              </ListItem>
+                </ActionButtons>
+              </StyledListItem>
             ))}
           </List>
-        </Paper>
-      </Paper>
-    </Box>
+        </StyledListPaper>
+      </StyledPaper>
   );
 };
 
